@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+    
+    <head>
+        <title>Login Facebook</title>
+        
+        <meta charset="utf-8" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+       	<link rel="stylesheet" href="static/css/bootstrap.min.css">
+		<link rel="stylesheet" href="static/css/bootstrap-theme.min.css">
+        <script src="static/js/jquery-3.2.1.min.js"></script>
+        <script src="static/js/bootstrap.min.js"></script>
+        <link href="static/css/font-awesome.css" rel="stylesheet">
+		<link href="static/css/index.css" rel="stylesheet">
+		
+		<script src="static/js/request.js"></script>
+		<script src="static/js/global.js"></script>
+		
+		
+		
+	</head>
+    
+    <body>
+    	
+    	
+        <script>
+    	   
+    	   window.fbAsyncInit = function() {
+    	    FB.init({
+    	      appId      : '350951291984509',
+    	      cookie     : true,
+    	      xfbml      : true,
+    	      version    : 'v2.8'
+    	    });
+    	    
+    	    FB.AppEvents.logPageView();   
+    	  };
+    	
+    	  (function(d, s, id){
+    	     var js, fjs = d.getElementsByTagName(s)[0];
+    	     if (d.getElementById(id)) {return;}
+    	     js = d.createElement(s); js.id = id;
+    	     js.src = "//connect.facebook.net/en_US/sdk.js";
+    	     fjs.parentNode.insertBefore(js, fjs);
+    	   }(document, 'script', 'facebook-jssdk'));
+    	   
+    		
+    		
+    		function checkLoginState() {
+    		
+    			FB.getLoginStatus(function(response) {
+    				
+    				debugger;
+    				console.log(response);
+    				response = response.authResponse; 
+    				 
+    				if(response == null) {
+    				    alert("Faça login no facebook em seu navegador principal");
+    					FB.login();
+    					return;
+    				}
+    				
+    				url =  URL_SERVICE + "users/username=" + response.userID + "&password=" + response.userID + "/facebook";
+    			
+    			    var data = {};
+    				
+    				
+    				sessionStorage.setItem("username", response.userID);
+    		        sessionStorage.setItem("password", response.userID);
+    				
+    				/*data = {   
+						"username" : response.userID,
+						"password" : response.accessToken
+					};*/ 				
+    				
+    				
+    				var callBS = function(){ debugger;};
+    				var callSuccess = function(data){
+    					
+    					debugger;
+    					
+    					sessionStorage.setItem("USER_ID", data.id);
+    					
+    					
+    					window.location.replace("cardapio.html");
+    					
+    				};
+    				
+    				var callError = function(xhr){
+    				    
+    				    
+    				    debugger;
+    					
+    					//window.location.replace("cardapio.html");
+    					alert("Erro ao acessar, consulte o administrador");
+    					debugger;}
+    					
+    				var callComplete = function(){};
+    				
+    				
+    				
+    				
+    				request(url, data, "POST", callBS, callSuccess, callError, callComplete);
+    				
+    				//response.authResponse
+    				    //accessToken
+    				    //userID
+    				    
+    				    //getNomE// https://graph.facebook.com/user_id?fields=name 
+    				    
+    				
+    				
+    				
+    			
+    				//statusChangeCallback(response);
+    			});
+    		}
+    		
+    	
+    		
+        </script>
+        
+        <div class="container">
+           <div class="row text-center">
+                <h2> Encomendador </h2>      
+           </div>
+  
+            
+            <div class="row">
+                <img src="static/image/pathDML.png" class="img-responsive" alt="Responsive image"> 
+            </div>
+          
+            
+            <div class="row text-center">
+																									                
+                <br>
+            
+                <div class="col-xs-12 col-md-12 ">  
+                    <button type="button" class="btn btn-primary btn-lg btn-block" onclick="checkLoginState();">Facebook</button>
+                </div>     
+                
+            </div> 
+        </div>
+    </body>
+    
+    
+    <script>
+    
+    
+    
+        $(document).ready(function(){
+            
+            
+            var nome =  sessionStorage.getItem("username");
+            var senha = sessionStorage.getItem("password");
+            
+            if (nome != null && senha != null)
+                window.location.replace("cardapio.html");
+            
+            $("h2").on('click', function() { // Mobile browsers only
+    			window.location.replace("login.html");
+				});
+            
+        });
+    
+    
+    		
+    
+    </script>
+    
+    
+</html>

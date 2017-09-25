@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+    
+    <head>
+        <title></title>
+        <meta charset="utf-8" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+       	<link rel="stylesheet" href="static/css/bootstrap.min.css">
+		<link rel="stylesheet" href="static/css/bootstrap-theme.min.css">
+        <script src="static/js/jquery-3.2.1.min.js"></script>
+        <script src="static/js/bootstrap.min.js"></script>
+        <link href="static/css/font-awesome.css" rel="stylesheet">
+		<link href="static/css/login.css" rel="stylesheet">
+		
+		<script src="static/js/request.js"></script>
+		<script src="static/js/global.js"></script>
+
+	</head>
+    
+    <body>
+    
+        <div class="container">
+           
+          <form>
+              <div class="form-group">
+                <label for="username">Nome de Usuário</label>
+                <input type="text" class="form-control" id="username">
+              </div>
+              <div class="form-group">
+                <label for="pwd">Senha</label>
+                <input type="password" class="form-control" id="pwd">
+              </div>
+          </form>
+           
+           
+           <div class="col-xs-12 col-md-12 "> 
+                 <button class="btn btn-primary btn-lg btn-block" id="login">Entrar</button>
+           </div>
+           
+            
+           
+        
+        </div>
+        
+        
+        
+    </body>
+    
+    
+    <script>
+    	
+    	
+    	$("#login").click(function(){
+    	    
+    	   var username = $("#username").val();
+    	   var password = $("#pwd").val();
+    	   
+    	   
+    	   if(username == null || password == null){
+    	       alert("Verifique o preenchimento dos campos.")
+    	   }
+    	   
+    	   url =  URL_SERVICE + "users/username=" + username + "&password=" + password;
+    			
+    				
+    	  var data = {};
+    		
+    		var callBS = function(){ debugger;};
+    		var callSuccess = function(data){
+    			
+    			
+    			sessionStorage.setItem("username", username);
+                sessionStorage.setItem("password", password);
+                sessionStorage.setItem("admin", 1);
+        			
+    			debugger;
+    			
+    			window.location.replace("cardapio.html");
+    			
+    		};
+    		
+    		var callError = function(xhr){
+    		    
+    		    
+    		    debugger;
+    			
+    			//window.location.replace("cardapio.html");
+    			alert("Erro ao acessar, consulte o administrador");
+    			debugger;}
+    			
+    		var callComplete = function(){};
+    		
+    		
+    		
+    		
+    		request(url, data, "GET", callBS, callSuccess, callError, callComplete); 
+    	    
+    	    
+    	});
+    	
+    	
+    
+    	
+    	
+    	
+    </script>
+    
+    
+</html>

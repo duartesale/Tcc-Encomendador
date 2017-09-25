@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        
+        <title>Carrinho</title>  
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="static/css/bootstrap.min.css">
+		<link rel="stylesheet" href="static/css/bootstrap-theme.min.css">
+		<link rel="stylesheet" href="static/css/loading.css">
+		<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
+        <script src="static/js/jquery-3.2.1.min.js"></script>
+        <script src="static/js/bootstrap.min.js"></script>
+        <link href="static/css/font-awesome.css" rel="stylesheet">
+		  
+	    <script src="static/js/request.js"></script>
+	    <script src="static/js/global.js"></script>
+	    
+       
+        
+        
+
+    </head>
+    
+    
+    <body>
+        
+        
+    <div id="nav"></div>      
+   
+        
+        
+        
+    <div class="container">
+         <table id="tabela_pedido" class="table"> 
+           
+             <thead>
+                 <tr>
+                   <th>Nome</th>
+                   <th>Quantidade</th>
+                   <th>Valor R$</th>
+                 </tr>
+              </thead>
+         
+              <tbody>
+                
+              </tbody>    
+         
+         
+         </table>
+    </div>        
+        
+        <hr>
+      <div class="container">
+        
+          <div class="row">
+            <div class="col-md-5 pull-right strong"> Total: R$  <b><span id="spanTotal">10,00 </span></b> </div>
+          </div>
+        
+          <div class="row">
+            <div class="col-md-5 pull-right">
+              <a id="fechar_pedido" class="btn btn-success" >Fechar Pedido</a>
+            </div>
+            
+
+             <div class="col-md-5 pull-right"> 
+              <a id="voltar_cardapio" class="btn btn-default" href="cardapio.html">Voltar ao Cardápio</a>
+            </div>  
+          </div>
+        
+        </div>  
+      
+    <div id="divLoading"> 
+    </div>
+        
+        
+    </body>
+    
+    <script src="static/js/pedido.js" ></script>
+    
+    <script type="text/javascript">
+   
+      $(document).ready(function(){
+        debugger;
+        
+         listaPedidos = JSON.parse(sessionStorage.getItem("lista_pedidos"));
+        
+          $("#nav").load("nav.html", function() {
+             $(".badge").text(listaPedidos.length);
+          });
+          
+         
+         var total = 0;
+         
+         
+         if(listaPedidos == null || listaPedidos.length == 0)
+            $("#fechar_pedido").addClass('disabled');
+         
+         
+          for (var i = listaPedidos.length; i--; ) {
+              var produtoHTML = retornarProdutoHTML(listaPedidos[i]);
+              $('#tabela_pedido > tbody:last-child').append(produtoHTML);
+              
+              total = total + listaPedidos[i].preco;
+          }
+          
+          $("#spanTotal").text(total);
+          
+          
+        
+        $("#fechar_pedido").click(function(){
+               
+               
+                debugger;
+               
+                 var user_id = sessionStorage.getItem("USER_ID");
+                       //user_id
+                var total = 0;    
+                  
+                var d = new Date();
+                var month = d.getMonth()+1;
+                var day = d.getDate();
+                  
+                var date_now =  d.getFullYear() + '/' + (month<10 ? '0' : '') + month + '/' + (day<10 ? '0' : '') + day;
+                  
+                var data = {status : "Pendente" , user_id : parseInt(user_id) , products : [], date : date_now };
+                       
+                for (var i = listaPedidos.length; i--; ) {
+                        var produto = {};
+                        
+                        
+                        produto.name = listaPedidos[i].nome;
+                        produto.product_id = listaPedidos[i].id;
+                        produto.price = listaPedidos[i].preco;
+                        
+                        var nomeElemento = "#quant" + produto.product_id;
+                        var quantidade= $(nomeElemento).val();
+                        
+                        
+                        produto.quant = parseInt(quantidade);
+                        total +=  produto.price  * quantidade;
+                        
+                        data.products.push(produto);
+                 }
+                 
+                data.price = total;
+                       
+                var url = URL_SERVICE + "order/"    
+                 
+                var callBS = function(){ debugger; $("div#divLoading").addClass('show');};
+    			var callSuccess = function(data){
+    					
+    					sessionStorage.setItem("lista_pedidos", JSON.stringify([]));
+    					
+    					
+    					
+    					debugger;
+    					alert("Pedido Confirmado!");
+    					
+    				    window.location.replace("pedidos.html");
+    					
+    				};
+    				
+				var callError = function(xhr){
+				    
+				    debugger;
+				    alert("Erro ao fechar pedido, consulte o administrador");
+				}
+					
+				var callComplete = function(){ $("div#divLoading").removeClass('show');};
+				
+				
+				request(url, data, "POST", callBS, callSuccess, callError, callComplete);
+               
+               
+           })
+      
+      });
+      
+      
+      
+        
+        
+        
+        
+        
+        
+      
+     
+      
+    
+    
+    </script>
+    
+    
+</html>

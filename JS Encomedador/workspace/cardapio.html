@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        
+        
+        <title>Cardápio</title>  
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="utf-8" /> 
+        
+        <link rel="stylesheet" href="static/css/bootstrap.min.css">
+		    <link rel="stylesheet" href="static/css/bootstrap-theme.min.css">
+        <script src="static/js/jquery-3.2.1.min.js"></script>
+        <script src="static/js/bootstrap.min.js"></script>
+        <link href="static/css/font-awesome.css" rel="stylesheet">
+		    <link href="static/css/cardapio.css" rel="stylesheet">
+		
+		    <script src="static/js/request.js"></script>
+		    <script src="static/js/global.js"></script>
+        <script src="static/js/cardapio.js"></script>
+        
+      
+        <script type="text/javascript">
+    
+    
+    
+          function getParameterByName(name, url) {
+              if (!url) url = window.location.href;
+              name = name.replace(/[\[\]]/g, "\\$&");
+              var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                  results = regex.exec(url);
+              if (!results) return null;
+              if (!results[2]) return '';
+              return decodeURIComponent(results[2].replace(/\+/g, " "));
+          }
+    
+    
+          $(document).ready(function(){
+            
+            debugger;
+            
+            var userId = getParameterByName("uid")
+            url =  URL_SERVICE + "users/username=" + userId+ "&password=" + userId + "/facebook";
+            
+            var data = {};
+            
+            
+            sessionStorage.setItem("username", userId);
+            sessionStorage.setItem("password", userId);
+    				
+    			  var callBS = function(){ debugger;};
+    				var callSuccess = function(data){
+    					
+    					debugger;
+    					
+    					sessionStorage.setItem("USER_ID", data.id);
+    					
+    					
+    					//window.location.replace("cardapio.html");
+    					
+    				};
+    				
+    				var callError = function(xhr){
+    				    
+    				    
+    				    debugger;
+    					
+    					//window.location.replace("cardapio.html");
+    				//	alert("Erro ao acessar, consulte o administrador");
+    					debugger;}
+    					
+    				var callComplete = function(){};
+    				
+    				
+    				
+    				
+    				request(url, data, "POST", callBS, callSuccess, callError, callComplete);
+      		     
+      		     
+    		     
+            
+              $("#nav").load("nav.html");
+              
+              
+              /// Produtos
+              
+              
+               var url =  URL_SERVICE + "products/menu";
+          var data = {};
+          
+          var callBS = function(){ debugger;};
+  				var callSuccess = function(data){
+  					
+  					debugger;
+  					
+  					for (var i = 0; i < data.length; i++) {
+  					 
+  					  var c = retornarCategoriaHTML(data[i]);
+  					 
+  					  $("#accordion").append(c);
+  					 
+  					}
+  					
+  					
+  					debugger;
+  					
+  				
+  					
+  				};
+      				
+  				var callError = function(xhr){
+  				    
+  				  
+  					//window.location.replace("cardapio.html");
+  					alert("Erro ao acessar, consulte o administrador");
+  					debugger;}
+      					
+  				 var callComplete = function(){};
+      
+           request(url, data, "GET", callBS, callSuccess, callError, callComplete);
+          
+          
+           if(sessionStorage.getItem("lista_pedidos") != null ) {
+      
+           listaPedidos = JSON.parse(sessionStorage.getItem("lista_pedidos"));
+           $(".badge").text(listaPedidos.length);
+      
+          }
+      
+         
+      			
+        
+          
+          });
+          
+          
+      
+        </script>
+    
+    </head>
+
+    <body>
+       
+    <div id="nav"> </div>
+      <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+      <!--<div class="panel panel-default">
+        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+        
+          <div class="panel-heading" role="tab" id="headingThree">
+            <h4 class="panel-title">
+              Outro Grupo
+            </h4>
+          </div>
+        </a>
+        
+        <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+          <div class="panel-body">
+            
+            
+            <div class="table-responsive ">
+              
+              
+               <table class="table table-hover">
+                  
+                  <tbody>
+                    <tr>
+                      <td>Xis Bacon</td>
+                      <td>R$ 10,00</td>
+                      <td>
+                        
+                        <button class="btn btn-default add-produto">
+                            <span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
+                            <span class="fa fa-plus"></span>
+                        </button>
+                        
+                      </td>
+                    </tr>
+                  </tbody>
+                  
+                  
+              </table>
+              </div>
+            
+          </div>
+        </div>
+      </div>-->
+    </div>
+    
+    <div id="divLoading"> 
+    </div>
+        
+        
+    </body>
+    
+    
+    <script>
+    
+    
+      
+      
+    
+    
+     var quantidadePedido = 0; 
+     var somarProduto = function(){
+                
+                quantidadePedido++;
+              };
+              
+      var funcaoSucesso = function(data){
+        somarProduto();
+        alert("Produto adicionado ao pedido com sucesso");
+        $(".badge").text(quantidadePedido);
+        $("div#divLoading").removeClass('show');
+      }
+    
+      
+    
+       function addProdutoPedido(element ,id, nome, preco, quant){
+         
+            debugger;
+            var listaPedidos = [];
+   
+   
+            if(quantidadePedido > 0){
+              
+              listaPedidos = JSON.parse(sessionStorage.getItem("lista_pedidos"));
+              
+            }
+   
+   
+            listaPedidos.push( { id : id, nome, nome, preco : preco, quant : quant } );
+            sessionStorage.setItem("lista_pedidos", JSON.stringify(listaPedidos));
+	         
+    	      /*debugger;
+            $("div#divLoading").addClass('show');
+            setTimeout(funcaoSucesso, 3000);*/
+            
+            
+             somarProduto();
+              alert("Produto adicionado ao pedido com sucesso");
+              $(".badge").text(quantidadePedido);
+              
+              
+              $(element).prop('disabled', true);
+         
+         
+       }
+    
+    </script>
+    
+    
+   
+    
+</html>

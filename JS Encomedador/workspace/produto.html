@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        
+        <title>Produto</title>  
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="UTF-8">
+        
+        <link rel="stylesheet" href="static/css/bootstrap.min.css">
+		<link rel="stylesheet" href="static/css/bootstrap-theme.min.css">
+        <script src="static/js/jquery-3.2.1.min.js"></script>
+        <script src="static/js/bootstrap.min.js"></script>
+        <link href="static/css/font-awesome.css" rel="stylesheet">
+		  
+		    <script src="static/js/request.js"></script>
+		    <script src="static/js/global.js"></script>
+    
+    </head>
+    
+    <body>
+        
+    <div id="nav">
+       
+    </div>
+        
+   
+    <div class="container">
+        
+        <div class="col-md-12">
+            <h3>Arroz</h3>
+        </div>
+        
+        <div class="col-md-12"><p>Descrição </p> </div>
+        <div class="col-md-12">Valor: R$ 20,00 </div>
+        
+        
+        <div class="col-md-6">
+            Categoria: 
+            <select> 
+                <option value="1">Lanche</option>
+                <option value="2">Refeição</option>
+            </select> 
+            <button class="btn btn-default btn-xs">Ativar</button>
+        </div>
+        
+        
+        
+        
+    </div>        
+        
+    
+    <div id="divLoading"> 
+    </div>
+        
+        
+    </body>
+    
+    <script type="text/javascript">
+   
+      $(document).ready(function(){
+        
+        
+         $("#nav").load("nav.html");
+        
+          var quantidadePedido = 0; 
+          var somarProduto = function(){
+            
+            quantidadePedido++;
+            
+          };
+          
+          var funcaoSucesso = function(data){
+            somarProduto();
+            alert("Produto adicionado ao pedido com sucesso");
+            $(".badge").text(quantidadePedido);
+            $("div#divLoading").removeClass('show');
+            
+            
+          }
+          
+          $(".add-produto").click(function(){
+              $("div#divLoading").addClass('show');
+              setTimeout(funcaoSucesso, 3000);
+           });
+      
+      });
+      
+      
+      
+        
+        
+        
+        
+        
+        
+      
+     
+      
+    
+    
+    </script>
+    
+    
+</html>

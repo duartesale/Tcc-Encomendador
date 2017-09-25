@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        
+        <title>Produtos</title>  
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="UTF-8">
+        
+        <link rel="stylesheet" href="static/css/bootstrap.min.css">
+		<link rel="stylesheet" href="static/css/bootstrap-theme.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/3.1.3/css/bootstrap-datetimepicker.min.css">
+        <!--<script src="static/js/jquery-3.2.1.min.js"></script> -->
+        
+        <script src="static/js/jquery.min.js"></script>
+     
+        <script src="static/js/bootstrap.min.js"></script>
+        <link href="static/css/font-awesome.min-43" rel="stylesheet">
+        
+       
+        <script src="static/js/request.js"></script>
+	    <script src="static/js/global.js"></script>
+    
+        <script src="static/js/produtos.js"></script>
+        
+        <script src="static/js/moment-with-locales.min.js"></script>
+        <script src="static/js/bootstrap-datetimepicker.min.js"></script>
+        
+    </head>
+    
+    
+    <body>
+        
+        
+    <div id="nav">
+       
+    </div>
+        
+   
+    <div class="container">
+        
+        <div>
+             
+            <button class="btn btn-default btn-xs" data-toggle="modal" data-target="#myModal">Adicionar Produto  <span class="glyphicon glyphicon-plus"></span></button>
+            
+            <hr>
+        </div>
+        
+        <div class="table-responsive">
+         <table class="table table-hover" id="tabela_produtos"> 
+           
+             <thead>
+                 <tr>
+                   <th>Nome</th>
+                   <th>Valor</th>
+                   <th>Status</th>
+                   <th>Cardapio</th>
+                   <th>Excluir</th>
+                 
+                  
+                 </tr>
+              </thead>
+         
+              <tbody>
+                
+                
+              </tbody>    
+         </table>
+         </div>
+    </div>        
+        
+        
+        
+        
+    <div class="container">
+      
+      <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
+        
+        
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Adicionar Produto</h4>
+            </div>
+            <div class="modal-body">
+             
+                 <form>
+                     <div class="form-group">
+                        <label for="nome">Nome</label>
+                        <input type="text" class="form-control" id="nome">
+                      </div>
+                      
+                      <div class="form-group">
+                        <label for="valor">Valor</label>
+                        <input type="text" class="form-control" id="valor">
+                     </div>
+                     
+                      <div class="form-group">
+                        <label for="valor">Data Validade</label>
+                        <div class='input-group date' id='datetimepicker1'>
+                            <input type='text' class="form-control" id="data" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                            </span>
+                        </div>
+                     </div>
+                     
+                       <div class="form-group">
+                        <label for="quant">Quantidade</label>
+                        <input type="number" class="form-control" id="quant">
+                     </div>
+                     
+                     <div class="form-group">
+                        <label for="categoria">Categoria</label>
+                        <input type="text" class="form-control" id="categoria">
+                      </div>
+                     
+                     
+                     <button id="btn_addproduto" class="btn btn-success">Add Produto</button>
+                     
+                 </form>
+             
+             
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+  
+    </div>
+    
+    <div id="divLoading"> 
+    </div>
+        
+        
+    </body>
+    
+    <script type="text/javascript">
+   
+      $(document).ready(function(){
+          
+          
+          
+            var bindDatePicker = function() {
+            	$(".date").datetimepicker({
+                format:'YYYY-MM-DD',
+            		icons: {
+            			time: "fa fa-clock-o",
+            			date: "fa fa-calendar",
+            			up: "fa fa-arrow-up",
+            			down: "fa fa-arrow-down"
+            		}
+            	}).find('input:first').on("blur",function () {
+            		// check if the date is correct. We can accept dd-mm-yyyy and yyyy-mm-dd.
+            		// update the format if it's yyyy-mm-dd
+            		var date = parseDate($(this).val());
+            
+            		if (! isValidDate(date)) {
+            			//create date based on momentjs (we have that)
+            			date = moment().format('YYYY-MM-DD');
+            		}
+            
+            		$(this).val(date);
+            	});
+            }
+            
+            var isValidDate = function(value, format) {
+            	format = format || false;
+            	// lets parse the date to the best of our knowledge
+            	if (format) {
+            		value = parseDate(value);
+            	}
+            
+            	var timestamp = Date.parse(value);
+            
+            	return isNaN(timestamp) == false;
+            }
+            
+            var parseDate = function(value) {
+            	var m = value.match(/^(\d{1,2})(\/|-)?(\d{1,2})(\/|-)?(\d{4})$/);
+            	if (m)
+            		value = m[5] + '-' + ("00" + m[3]).slice(-2) + '-' + ("00" + m[1]).slice(-2);
+            
+            	return value;
+            }
+            
+            bindDatePicker();
+     
+         
+        debugger;
+        $("#nav").load("nav.html");
+         
+        var data = {};
+        url = URL_SERVICE + "products/"
+        
+        var callBS = function(){ debugger;};
+  		
+  		
+        var callSuccess = function(data){
+        
+            if(data == null || data.length < 0){
+              alert("Nenhum Produto encontrado");
+            }
+            
+            for (var i = 0; i < data.length; i++) {
+              var produtoHTML = retornarProdutosHTML(data[i]);
+              
+               $('#tabela_produtos > tbody:last-child').append(produtoHTML);
+            }
+            
+            debugger;
+        };
+      				
+  		var callError = function(xhr){
+  		    
+  		  
+  		//window.location.replace("cardapio.html");
+  		alert("Erro ao acessar, consulte o administrador");
+  		debugger;}
+  				
+  		 var callComplete = function(){};
+
+         request2(url, data, "GET", callBS, callSuccess, callError, callComplete);
+        //retornarProdutosHTML(data)
+          
+         
+        
+      });
+      
+      
+      $("#btn_addproduto").click(function(e){
+          
+         e.preventDefault();
+          
+          
+         debugger;
+         
+         var data = {};
+         url = URL_SERVICE + "products"
+        
+         var nome = $("#nome").val();
+         var valor = $("#valor").val();
+         var dataValidade   = $("#data").val();
+         var quant   = $("#quant").val();
+         var categoria   = $("#categoria").val();
+         
+         
+         if(nome == "" || valor == "" || dataValidade == "" || quant == "" || categoria == ""){
+            alert("Preencha todos os campos!");
+            return;
+         }
+         
+         data = {
+             name : nome,
+             price : valor,
+             datevalidate : dataValidade,
+             quant : quant,
+             status : "Ativo",
+             categoria : categoria
+         }
+         
+          
+          var callBS = function(){ debugger;};
+  		
+  		
+  		  var callSuccess = function(data){
+  			  
+  			  debugger;
+  			    
+  			  alert("Produto adicionado com sucesso");
+  			    
+  		      window.location.replace("produtos.html");
+  			
+  			  
+  		    };
+      				
+  		var callError = function(xhr){
+  		    
+  		  
+  		 debugger;
+  			    
+  			  alert("Produto adicionado com sucesso");
+  			    
+  		      window.location.replace("produtos.html");}
+  				
+  		 var callComplete = function(){};
+
+         request(url, data, "POST", callBS, callSuccess, callError, callComplete);
+          
+          
+          
+      });
+      
+      
+      
+        
+        
+        
+        
+        
+        
+      
+     
+      
+    
+    
+    </script>
+    
+    
+</html>
